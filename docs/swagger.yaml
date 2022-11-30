@@ -1,0 +1,121 @@
+basePath: /
+definitions:
+  entity.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  entity.ResponseError:
+    properties:
+      message:
+        type: string
+    type: object
+  entity.ResponseLogin:
+    properties:
+      bearer:
+        type: string
+    required:
+    - bearer
+    type: object
+  entity.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      userId:
+        type: integer
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - role
+    - username
+    type: object
+info:
+  contact:
+    name: API Support
+    url: https://github.com/asdiyanarisha
+  description: Simple echo rest api with clean architecture.
+  title: Echo Simple Clean Api
+  version: 0.0.1
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Endpoint for input username and password
+      operationId: process-login
+      parameters:
+      - description: query login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ResponseLogin'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ResponseError'
+      tags:
+      - auth
+  /user/add:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint use for add user
+      operationId: user-insert
+      parameters:
+      - description: query add user
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerToken: []
+      tags:
+      - user
+  /user/auth:
+    get:
+      description: Testing bearer token is valid or not
+      operationId: user-test-auth
+      responses:
+        "200":
+          description: Authenticated
+          schema:
+            type: string
+      security:
+      - BearerToken: []
+      tags:
+      - user
+securityDefinitions:
+  BearerToken:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
