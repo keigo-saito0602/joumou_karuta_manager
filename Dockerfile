@@ -6,4 +6,7 @@ COPY . /app/
 WORKDIR /app/
 
 RUN go build app/main.go
+
+RUN ./main --migrate
+
 CMD ["./main"]

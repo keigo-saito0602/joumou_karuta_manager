@@ -16,11 +16,11 @@ Next, run testing code in root program for make sure this program running proper
 go test ./... -v
 ```
 
-And then build and run `Dockerfile` this app:
+Before build docker container, `you must create a database`. after that you can build and run `Dockerfile` this app:
 
 ```shell
-docker build --tag go-clean-api:0.0.1 .
-docker run -d --rm -p 5000:5000 --name golang-api go-clean-api:0.0.1
+docker build --tag go-clean-api:latest .
+docker run -d --rm -p 5000:5000 --name golang-api go-clean-api:latest
 ```
 
 If you want check swagger documentation this api, you can open it via browser (`http://localhost:5000/swagger/index.html`).
