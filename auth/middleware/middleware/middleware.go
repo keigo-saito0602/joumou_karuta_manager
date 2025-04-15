@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

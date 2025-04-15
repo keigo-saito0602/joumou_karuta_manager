@@ -6,11 +6,11 @@ import (
 	"sync"
 	"testing"
 
-	authUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/auth/usecase"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/entity/mocks"
-	_userMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/user/middleware"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	authUsecase "github.com/keigo-saito0602/joumou_karuta_manager/auth/usecase"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
+	"github.com/keigo-saito0602/joumou_karuta_manager/entity/mocks"
+	_userMiddleware "github.com/keigo-saito0602/joumou_karuta_manager/user/middleware"
+	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"

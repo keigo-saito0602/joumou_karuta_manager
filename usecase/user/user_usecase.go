@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
 	"time"
 
 	"github.com/go-playground/validator/v10"

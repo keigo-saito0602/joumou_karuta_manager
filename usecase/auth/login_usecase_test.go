@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/entity/mocks"
-	userUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/user/usecase"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
+	"github.com/keigo-saito0602/joumou_karuta_manager/entity/mocks"
+	userUsecase "github.com/keigo-saito0602/joumou_karuta_manager/user/usecase"
+	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 	"sync"
 	"testing"
 	"time"

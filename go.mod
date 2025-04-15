@@ -1,4 +1,4 @@
-module github.com/keigo-saito0602/JoumouKarutaTyping
+module github.com/keigo-saito0602/joumou_karuta_manager
 
 go 1.22
 

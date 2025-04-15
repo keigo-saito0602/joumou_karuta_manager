@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
-	_userMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/user/middleware"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
+	_userMiddleware "github.com/keigo-saito0602/joumou_karuta_manager/user/middleware"
+	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

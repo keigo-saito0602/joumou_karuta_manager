@@ -3,8 +3,8 @@ package usecase
 import (
 	"errors"
 	"fmt"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
-	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
+	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 	"time"
 
 	"github.com/go-playground/validator/v10"
