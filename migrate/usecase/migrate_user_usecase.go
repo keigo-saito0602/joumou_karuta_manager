@@ -1,8 +1,9 @@
 package usecase
 
 import (
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+
 	"github.com/labstack/gommon/log"
-	"go-clean-api/entity"
 	"gorm.io/gorm"
 )
 

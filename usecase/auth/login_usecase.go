@@ -3,12 +3,13 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
-	"go-clean-api/entity"
-	"go-clean-api/util"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 var validate *validator.Validate

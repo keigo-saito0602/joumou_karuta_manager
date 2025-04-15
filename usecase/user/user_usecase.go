@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"time"
+
 	"github.com/go-playground/validator/v10"
-	"go-clean-api/entity"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/sync/errgroup"
-	"time"
 )
 
 var validate *validator.Validate

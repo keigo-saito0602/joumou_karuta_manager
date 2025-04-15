@@ -3,7 +3,7 @@ package util
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"go-clean-api/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
 )
 
 func DefineTagError(tag string, field string) string {

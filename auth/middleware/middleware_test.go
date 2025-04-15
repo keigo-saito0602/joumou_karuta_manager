@@ -1,18 +1,20 @@
 package middleware
 
 import (
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
-	authUsecase "go-clean-api/auth/usecase"
-	"go-clean-api/entity"
-	"go-clean-api/entity/mocks"
-	_userMiddleware "go-clean-api/user/middleware"
-	"go-clean-api/util"
 	"net/http"
 	"net/http/httptest"
 	"sync"
 	"testing"
+
+	authUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/auth/usecase"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/entity/mocks"
+	_userMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/user/middleware"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
 )
 
 var (

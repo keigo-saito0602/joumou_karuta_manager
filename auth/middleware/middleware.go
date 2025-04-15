@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"go-clean-api/entity"
-	"go-clean-api/util"
 )
 
 type AuthMiddleware struct {

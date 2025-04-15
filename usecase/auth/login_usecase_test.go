@@ -1,14 +1,15 @@
 package usecase
 
 import (
-	"github.com/stretchr/testify/assert"
-	"go-clean-api/entity"
-	"go-clean-api/entity/mocks"
-	userUsecase "go-clean-api/user/usecase"
-	"go-clean-api/util"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/entity/mocks"
+	userUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/user/usecase"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var config = util.Config{}

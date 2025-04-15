@@ -2,21 +2,22 @@ package main
 
 import (
 	"flag"
+	authHttpDelivery "github.com/keigo-saito0602/JoumouKarutaTyping/auth/delivery/http"
+	_authMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/auth/middleware"
+	_authUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/auth/usecase"
+	_ "github.com/keigo-saito0602/JoumouKarutaTyping/docs"
+	_migrateUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/migrate/usecase"
+	userHttpDelivery "github.com/keigo-saito0602/JoumouKarutaTyping/user/delivery/http"
+	_userMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/user/middleware"
+	_userRepository "github.com/keigo-saito0602/JoumouKarutaTyping/user/repository"
+	_userUsecase "github.com/keigo-saito0602/JoumouKarutaTyping/user/usecase"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"time"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	authHttpDelivery "go-clean-api/auth/delivery/http"
-	_authMiddleware "go-clean-api/auth/middleware"
-	_authUsecase "go-clean-api/auth/usecase"
-	_ "go-clean-api/docs"
-	_migrateUsecase "go-clean-api/migrate/usecase"
-	userHttpDelivery "go-clean-api/user/delivery/http"
-	_userMiddleware "go-clean-api/user/middleware"
-	_userRepository "go-clean-api/user/repository"
-	_userUsecase "go-clean-api/user/usecase"
-	"go-clean-api/util"
 	"gorm.io/gorm"
-	"time"
 )
 
 var config *util.Config

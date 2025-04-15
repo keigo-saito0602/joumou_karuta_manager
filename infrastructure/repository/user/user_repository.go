@@ -1,7 +1,8 @@
 package repository
 
 import (
-	"go-clean-api/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+
 	"gorm.io/gorm"
 )
 

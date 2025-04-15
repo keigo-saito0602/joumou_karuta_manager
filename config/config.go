@@ -2,11 +2,12 @@ package util
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
-	"go-clean-api/docs"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/docs"
 	"io/ioutil"
 	"log"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 type Config struct {

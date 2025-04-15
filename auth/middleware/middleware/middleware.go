@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"go-clean-api/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 type UserMiddleware struct{}

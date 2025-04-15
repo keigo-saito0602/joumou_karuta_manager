@@ -1,11 +1,12 @@
 package http
 
 import (
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"go-clean-api/entity"
-	"go-clean-api/util"
-	"net/http"
 )
 
 type AuthHandler struct {

@@ -1,12 +1,13 @@
 package http
 
 import (
+	"github.com/keigo-saito0602/JoumouKarutaTyping/domain/entity"
+	_userMiddleware "github.com/keigo-saito0602/JoumouKarutaTyping/user/middleware"
+	"github.com/keigo-saito0602/JoumouKarutaTyping/util"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"go-clean-api/entity"
-	_userMiddleware "go-clean-api/user/middleware"
-	"go-clean-api/util"
-	"net/http"
 )
 
 type UserHandler struct {
