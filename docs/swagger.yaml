@@ -7,8 +7,8 @@ definitions:
       username:
         type: string
     required:
-    - password
-    - username
+      - password
+      - username
     type: object
   entity.ResponseError:
     properties:
@@ -20,7 +20,7 @@ definitions:
       bearer:
         type: string
     required:
-    - bearer
+      - bearer
     type: object
   entity.User:
     properties:
@@ -37,10 +37,10 @@ definitions:
       username:
         type: string
     required:
-    - email
-    - password
-    - role
-    - username
+      - email
+      - password
+      - role
+      - username
     type: object
 info:
   contact:
@@ -53,53 +53,53 @@ paths:
   /login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Endpoint for input username and password
       operationId: process-login
       parameters:
-      - description: query login
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.Login'
+        - description: query login
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/entity.Login"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.ResponseLogin'
+            $ref: "#/definitions/entity.ResponseLogin"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ResponseError'
+            $ref: "#/definitions/entity.ResponseError"
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ResponseError'
+            $ref: "#/definitions/entity.ResponseError"
       tags:
-      - auth
+        - auth
   /user/add:
     post:
       consumes:
-      - application/json
+        - application/json
       description: This endpoint use for add user
       operationId: user-insert
       parameters:
-      - description: query add user
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/entity.User'
+        - description: query add user
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/entity.User"
       produces:
-      - application/json
+        - application/json
       responses: {}
       security:
-      - BearerToken: []
+        - BearerToken: []
       tags:
-      - user
+        - user
   /user/auth:
     get:
       description: Testing bearer token is valid or not
@@ -110,9 +110,9 @@ paths:
           schema:
             type: string
       security:
-      - BearerToken: []
+        - BearerToken: []
       tags:
-      - user
+        - user
 securityDefinitions:
   BearerToken:
     in: header

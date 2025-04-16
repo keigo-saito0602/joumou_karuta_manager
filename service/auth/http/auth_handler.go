@@ -1,12 +1,11 @@
 package http
 
 import (
-	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
-	"github.com/keigo-saito0602/joumou_karuta_manager/util"
+	"log"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
+	"github.com/labstack/echo"
 )
 
 type AuthHandler struct {

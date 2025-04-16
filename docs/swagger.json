@@ -1,187 +1,163 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "Simple echo rest api with clean architecture.",
-        "title": "Echo Simple Clean Api",
-        "contact": {
-            "name": "API Support",
-            "url": "https://github.com/asdiyanarisha"
-        },
-        "version": "0.0.1"
+  "swagger": "2.0",
+  "info": {
+    "description": "Simple echo rest api with clean architecture.",
+    "title": "Echo Simple Clean Api",
+    "contact": {
+      "name": "API Support",
+      "url": "https://github.com/asdiyanarisha"
     },
-    "basePath": "/",
-    "paths": {
-        "/login": {
-            "post": {
-                "description": "Endpoint for input username and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "operationId": "process-login",
-                "parameters": [
-                    {
-                        "description": "query login",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.Login"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseLogin"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseError"
-                        }
-                    }
-                }
+    "version": "0.0.1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/login": {
+      "post": {
+        "description": "Endpoint for input username and password",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["auth"],
+        "operationId": "process-login",
+        "parameters": [
+          {
+            "description": "query login",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Login"
             }
-        },
-        "/user/add": {
-            "post": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "This endpoint use for add user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "operationId": "user-insert",
-                "parameters": [
-                    {
-                        "description": "query add user",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/entity.User"
-                        }
-                    }
-                ],
-                "responses": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ResponseLogin"
             }
-        },
-        "/user/auth": {
-            "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "Testing bearer token is valid or not",
-                "tags": [
-                    "user"
-                ],
-                "operationId": "user-test-auth",
-                "responses": {
-                    "200": {
-                        "description": "Authenticated",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/entity.ResponseError"
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/entity.ResponseError"
+            }
+          }
         }
+      }
     },
-    "definitions": {
-        "entity.Login": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
+    "/user/add": {
+      "post": {
+        "security": [
+          {
+            "BearerToken": []
+          }
+        ],
+        "description": "This endpoint use for add user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "operationId": "user-insert",
+        "parameters": [
+          {
+            "description": "query add user",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.User"
             }
-        },
-        "entity.ResponseError": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ResponseLogin": {
-            "type": "object",
-            "required": [
-                "bearer"
-            ],
-            "properties": {
-                "bearer": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.User": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "role",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        }
+          }
+        ],
+        "responses": {}
+      }
     },
-    "securityDefinitions": {
-        "BearerToken": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+    "/user/auth": {
+      "get": {
+        "security": [
+          {
+            "BearerToken": []
+          }
+        ],
+        "description": "Testing bearer token is valid or not",
+        "tags": ["user"],
+        "operationId": "user-test-auth",
+        "responses": {
+          "200": {
+            "description": "Authenticated",
+            "schema": {
+              "type": "string"
+            }
+          }
         }
+      }
     }
+  },
+  "definitions": {
+    "entity.Login": {
+      "type": "object",
+      "required": ["password", "username"],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ResponseError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ResponseLogin": {
+      "type": "object",
+      "required": ["bearer"],
+      "properties": {
+        "bearer": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.User": {
+      "type": "object",
+      "required": ["email", "password", "role", "username"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerToken": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
 }

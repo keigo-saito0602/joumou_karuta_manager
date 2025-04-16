@@ -2,23 +2,14 @@ package main
 
 import (
 	"flag"
-	authHttpDelivery "github.com/keigo-saito0602/joumou_karuta_manager/auth/delivery/http"
-	_authMiddleware "github.com/keigo-saito0602/joumou_karuta_manager/auth/middleware"
-	_authUsecase "github.com/keigo-saito0602/joumou_karuta_manager/auth/usecase"
-	_ "github.com/keigo-saito0602/joumou_karuta_manager/docs"
-	_migrateUsecase "github.com/keigo-saito0602/joumou_karuta_manager/migrate/usecase"
-	userHttpDelivery "github.com/keigo-saito0602/joumou_karuta_manager/user/delivery/http"
-	_userMiddleware "github.com/keigo-saito0602/joumou_karuta_manager/user/middleware"
-	_userRepository "github.com/keigo-saito0602/joumou_karuta_manager/user/repository"
-	_userUsecase "github.com/keigo-saito0602/joumou_karuta_manager/user/usecase"
-	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 	"time"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/gorm"
 )
+
 
 var config *util.Config
 

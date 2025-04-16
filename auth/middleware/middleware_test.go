@@ -6,16 +6,13 @@ import (
 	"sync"
 	"testing"
 
-	authUsecase "github.com/keigo-saito0602/joumou_karuta_manager/auth/usecase"
+	"github.com/go-playground/assert/v2"
+	"github.com/golang-jwt/jwt"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/entity"
-	"github.com/keigo-saito0602/joumou_karuta_manager/entity/mocks"
-	_userMiddleware "github.com/keigo-saito0602/joumou_karuta_manager/user/middleware"
 	"github.com/keigo-saito0602/joumou_karuta_manager/util"
-
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
+	"github.com/labstack/echo"
 )
+
 
 var (
 	mockConfig = util.Config{

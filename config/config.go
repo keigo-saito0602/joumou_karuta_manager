@@ -2,11 +2,11 @@ package util
 
 import (
 	"fmt"
-	"github.com/keigo-saito0602/joumou_karuta_manager/docs"
 	"io/ioutil"
 	"log"
 	"strings"
 
+	"github.com/keigo-saito0602/joumou_karuta_manager/docs"
 	"github.com/spf13/viper"
 )
 
