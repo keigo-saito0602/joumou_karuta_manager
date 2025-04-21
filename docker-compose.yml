@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    container_name: joumou_karuta_manager
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /app
+    command: ["./main"]
+
+  db:
+    image: mysql:8.0
+    container_name: DB
+    restart: always
+    environment:
+      MYSQL_DATABASE: joumou_karuta_manager
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    command: >
+      mysqld
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --innodb-monitor-enable=all
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root --silent"]
+      interval: 3s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  db_data:

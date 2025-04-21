@@ -1,0 +1,15 @@
+# Go build artifacts
+/bin
+/build
+*.exe
+*.test
+*.out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.DS_Store
+.env
