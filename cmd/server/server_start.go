@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,19 +21,18 @@ func serverStartCommand() *cobra.Command {
 	}
 }
 
-
 func runServer(ctx context.Context) error {
-	// DB接続（例）
 	conn := db.NewMySQLDB()
-	fmt.Println("✅ Connected to MySQL:", conn)
+	log.Println("✅ Connected to MySQL:", conn)
 
-	// シグナルで終了検知
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("🚀 Server is running... Press Ctrl+C to stop.")
+	log.Println("🚀 Server is running... Press Ctrl+C to stop.")
 
 	<-stop
-	fmt.Println("👋 Shutting down gracefully...")
+
+	log.Println("👋 Shutting down gracefully... Bye!")
+
 	return nil
 }

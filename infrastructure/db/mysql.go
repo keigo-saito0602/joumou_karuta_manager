@@ -23,8 +23,6 @@ func NewMySQLDB() *gorm.DB {
 	if err != nil {
 		log.Fatalf("❌ DB接続失敗: %v", err)
 	}
-
-	log.Println("✅ MySQL接続成功")
 	return db
 }
 
