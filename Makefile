@@ -20,14 +20,14 @@ DB_NAME ?= joumou_karuta_manager
 # Golang CLI Application
 # =======================
 
-BINARY_NAME=joumou_karuta_manager
-MIGRATION_PATH=assets/migrations
-APP_PORT=8080
+BINARY_NAME ?= $(PROJECT_NAME)
+MIGRATION_PATH ?= assets/migrations
+APP_PORT ?= 8080
 
 # Makefile 例
 MIGRATE=docker run --rm \
-  --network joumou_karuta_manager_default \
-  -v "$(shell pwd)/assets/migrations:/migrations" \
+  --network $(DOCKER_NETWORK_NAME) \
+  -v "$(shell pwd)/$(MIGRATION_PATH):/migrations" \
   migrate/migrate \
   -source=file:///migrations \
   -database "$(DATABASE_URL)"
@@ -37,12 +37,12 @@ MIGRATE=docker run --rm \
 # =======================
 
 .PHONY: help
-help: ## Show this help
+help: ## [make help] Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-18s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: check-env
-check-env: ## Check required env vars are set
+check-env: ## [make check-env] Check required env vars are set
 	@missing_vars=0; \
 	for var in DB_HOST DB_PORT DB_USER DB_PASSWORD DB_NAME; do \
 		if [ -z "$${!var}" ]; then \
@@ -56,7 +56,7 @@ check-env: ## Check required env vars are set
 	fi
 
 .PHONY: init-env
-init-env: ## Create .env from example if not exists
+init-env: ## [make init-env] Create .env from example if not exists
 	@if [ ! -f .env ]; then \
 		cp .env.example .env; \
 		echo "✅ .env created from .env.example"; \
@@ -69,19 +69,19 @@ init-env: ## Create .env from example if not exists
 # =======================
 
 .PHONY: run
-run: ## Run the CLI app directly
+run: ## [make run] Run the CLI app directly
 	go run main.go
 
 .PHONY: serve
-serve: ## Run the HTTP server
+serve: ## [make serve] Run the HTTP server
 	go run main.go serve
 
 .PHONY: build
-build: ## Build the Go app
+build: ## [make build] Build the Go app
 	go build -o $(BINARY_NAME) .
 
 .PHONY: clean
-clean: ## Clean build artifact
+clean: ## [make clean] Clean build artifact
 	rm -f $(BINARY_NAME)
 
 # =======================
@@ -89,47 +89,57 @@ clean: ## Clean build artifact
 # =======================
 
 .PHONY: docker-up
-docker-up: ## Start docker containers
+docker-up: ## [make docker-up] Start docker containers
 	docker compose up -d
 
 .PHONY: docker-down
-docker-down: ## Stop docker containers
+docker-down: ## [make docker-down] Stop docker containers
 	docker compose down
 
 .PHONY: docker-volume-clean
-docker-volume-clean: ## Remove DB volume
-	docker volume rm joumou_karuta_manager_db_data || true
+docker-volume-clean: ## [make docker-volume-clean] Remove DB volume
+	docker volume rm $(DB_VOLUME_NAME) || true
 
 .PHONY: docker-rebuild
-docker-rebuild: ## Rebuild docker containers
+docker-rebuild: ## [make docker-rebuild] Rebuild docker containers
 	docker compose build --no-cache
 
 .PHONY: fast-run
-fast-run: docker-down docker-volume-clean docker-rebuild docker-up migrate-up ## Rebuild all and migrate
+fast-run: ## [make fast-run] Rebuild docker server
+	reset docker-up migrate-up logs
+
+.PHONY: launch
+launch: ## [make launch] Start server without rebuilding
+	docker-up logs
 
 .PHONY: reset
-reset: docker-down docker-volume-clean docker-up ## Reset DB and restart
+reset: ## [make reset] Reset DB and restart
+	docker-down docker-volume-clean docker-rebuild docker-up
+
+.PHONY: logs
+logs: ## [make logs] Follow app logs
+	docker logs -f $(PROJECT_NAME)
 
 # =======================
 # Migration
 # =======================
 
 .PHONY: migrate-up
-migrate-up: check-env ## Apply all up migrations
+migrate-up: check-env ## [make migrate-up] Apply all up migrations
 	@echo "🚀 Running migration up..."
 	$(MIGRATE) up
 
 .PHONY: migrate-down
-migrate-down: check-env ## Rollback the last migration
+migrate-down: check-env ## [make migrate-down] Rollback the last migration
 	@echo "⏪ Rolling back last migration..."
 	$(MIGRATE) down 1
 
 .PHONY: migrate-version
-migrate-version: check-env ## Show current migration version
+migrate-version: check-env ## [make migrate-version] Show current migration version
 	@$(MIGRATE) version
 
 .PHONY: new-migration
-new-migration: ## Create new migration files. Usage: make new-migration NAME=create_users
+new-migration: ## [make new-migration] Create new migration files. Usage: make new-migration NAME=create_users
 	@read -p "Enter migration name (snake_case): " NAME; \
 	VERSION=$$(date +%Y%m%d%H%M%S); \
 	mkdir -p $(MIGRATION_PATH); \
@@ -141,11 +151,11 @@ new-migration: ## Create new migration files. Usage: make new-migration NAME=cre
 # =======================
 
 .PHONY: swag-init
-swag-init: ## Generate Swagger docs
+swag-init: ## [make swag-init] Generate Swagger docs
 	swag init --parseDependency --parseInternal
 
 .PHONY: swag-open
-swag-open: ## Open Swagger UI
+swag-open: ## [make swag-open] Open Swagger UI
 	open http://localhost:$(APP_PORT)/swagger/index.html
 
 # =======================
@@ -153,13 +163,13 @@ swag-open: ## Open Swagger UI
 # =======================
 
 .PHONY: lint
-lint: ## Run linters
+lint: ## [make lint] Run linters
 	golangci-lint run
 
 .PHONY: test
-test: ## Run unit tests
+test: ## [make test] Run unit tests
 	go test ./... -v -cover
 
 .PHONY: test-migrate
-test-migrate: ## Run migration tests
+test-migrate: ## [make test-migrate] Run migration tests
 	go test ./cmd/migrate -v
