@@ -2,27 +2,19 @@ package migrate
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mysql"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/joho/godotenv"
+	"github.com/golang-migrate/migrate"
+	"github.com/keigo-saito0602/joumou_karuta_manager/config"
 )
 
 func newMigrator() (*migrate.Migrate, error) {
-	_ = godotenv.Load()
+	config.LoadConfig()
 
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
+	db := config.AppConfig
 	dbURL := fmt.Sprintf(
 		"mysql://%s:%s@tcp(%s:%s)/%s?multiStatements=true",
-		dbUser, dbPassword, dbHost, dbPort, dbName,
+		db.DBUser, db.DBPass, db.DBHost, db.DBPort, db.DBName,
 	)
-
 	return migrate.New("file://assets/migrations", dbURL)
 }
+

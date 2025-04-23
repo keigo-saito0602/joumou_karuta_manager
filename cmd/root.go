@@ -23,7 +23,6 @@ func rootCommand() *cobra.Command {
 		root.AddGroup(g)
 	}
 
-	// 各サブコマンドを追加
 	root.AddCommand(
 		server.ServerCommand(),
 		migrate.MigrateCommand(),
