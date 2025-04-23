@@ -11,7 +11,7 @@ services:
       db:
         condition: service_healthy
     working_dir: /app
-    command: ["./main"]
+    command: ["./main", "server", "start"]
 
   db:
     image: mysql:8.0
