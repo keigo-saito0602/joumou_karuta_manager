@@ -184,3 +184,14 @@ generate-mock: ## [make generate-mock] 任意の usecase ファイルからモ�
 	MOCK_PATH=interface/handler/mocks/$${BASENAME}_mock.go && \
 	mockgen -source=$$USECASE_FILE -destination=$$MOCK_PATH -package=mocks && \
 	echo "✅ Mock generated: $$MOCK_PATH"
+
+.PHONY: cover
+cover:
+	go test -coverprofile=coverage.out \
+		./interface/handler/... \
+		./usecase/... \
+		./infrastructure/repository/... \
+		./validation/... \
+		./auth/... \
+		./util/...
+	go tool cover -html=coverage.out
