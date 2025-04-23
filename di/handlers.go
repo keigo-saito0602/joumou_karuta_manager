@@ -8,11 +8,13 @@ import (
 type Handlers struct {
 	User *handler.UserHandler
 	Memo *handler.MemoHandler
+	Card *handler.CardHandler
 }
 
 func NewHandlers(usecases *Usecases, validators *validation.Validators) *handler.Handlers {
 	return &handler.Handlers{
 		User: handler.NewUserHandler(usecases.User, validators.User),
 		Memo: handler.NewMemoHandler(usecases.Memo, validators.Memo),
+		Card: handler.NewCardHandler(usecases.Card),
 	}
 }
