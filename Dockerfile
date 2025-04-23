@@ -35,5 +35,6 @@ WORKDIR /app
 
 # ビルドステージからバイナリをコピー
 COPY --from=builder /app/main .
+COPY --from=builder /app/docs ./docs
 
 EXPOSE 8080

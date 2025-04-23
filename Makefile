@@ -104,17 +104,18 @@ docker-volume-clean: ## [make docker-volume-clean] Remove DB volume
 docker-rebuild: ## [make docker-rebuild] Rebuild docker containers
 	docker compose build --no-cache
 
+.PHONY: docker-exec
+docker-exec: ## [make docker-exec] Exec docker containers
+	docker exec -it $(PROJECT_NAME) sh
+
 .PHONY: fast-run
-fast-run: ## [make fast-run] Rebuild docker server
-	reset docker-up migrate-up logs
+fast-run: reset swag-init docker-up migrate-up logs ## [make fast-run] Rebuild docker server
 
 .PHONY: launch
-launch: ## [make launch] Start server without rebuilding
-	docker-up logs
+launch: swag-init docker-up logs ## [make launch] Start server without rebuilding
 
 .PHONY: reset
-reset: ## [make reset] Reset DB and restart
-	docker-down docker-volume-clean docker-rebuild docker-up
+reset: docker-down docker-volume-clean docker-rebuild ## [make reset] Reset DB and restart
 
 .PHONY: logs
 logs: ## [make logs] Follow app logs

@@ -4,3 +4,4 @@
 .env.production
 main
 !.env.example
+docs
