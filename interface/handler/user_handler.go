@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/keigo-saito0602/joumou_karuta_manager/auth"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
 	"github.com/keigo-saito0602/joumou_karuta_manager/usecase"
@@ -162,4 +163,49 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+// Login godoc
+// @Summary ログイン
+// @Description メールアドレスとパスワードでログイン
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body model.LoginRequest true "ログイン情報"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /login [post]
+func (h *UserHandler) Login(c echo.Context) error {
+	var req model.LoginRequest
+	if err := c.Bind(&req); err != nil {
+		return util.ErrorJSON(c, http.StatusBadRequest, "不正なリクエストです")
+	}
+
+	user, err := h.userUsecase.GetByEmail(c.Request().Context(), req.Email)
+	if err != nil || !util.CheckPasswordHash(req.Password, user.Password) {
+		return util.ErrorJSON(c, http.StatusUnauthorized, "メールアドレスまたはパスワードが間違っています")
+	}
+
+	token, err := auth.GenerateJWT(user.ID, user.Role)
+	if err != nil {
+		return util.ErrorJSON(c, http.StatusInternalServerError, "トークン生成に失敗しました")
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"token": token})
+}
+
+// AdminOnlySetting godoc
+// @Summary 管理者専用の設定取得
+// @Description 管理者しかアクセスできない設定API
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Router /auth/admin/settings [get]
+func (h *UserHandler) AdminOnlySetting(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "管理者用の設定にアクセスしました！",
+	})
 }

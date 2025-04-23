@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"log"
 
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
 	"gorm.io/gorm"
 )
@@ -14,6 +16,7 @@ type UserRepository interface {
 	GetUser(ctx context.Context, id uint64) (*model.User, error)
 	UpdateUser(ctx context.Context, user *model.User) error
 	DeleteUser(ctx context.Context, id uint64) error
+	GetByEmail(ctx context.Context, email string) (*model.User, error)
 }
 
 type gormUserRepository struct {
@@ -79,4 +82,15 @@ func (r *gormUserRepository) DeleteUser(ctx context.Context, id uint64) error {
 		log.Printf("[UserRepository][DeleteUser] Failed to delete user ID=%d: %v", id, err)
 	}
 	return err
+}
+
+func (r *gormUserRepository) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+	var user model.User
+	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
 }

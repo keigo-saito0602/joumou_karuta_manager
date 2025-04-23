@@ -4,8 +4,9 @@ type BoolFlag int
 
 const (
 	BoolFlagUnspecified BoolFlag = iota // 0: 不明
-	BoolFlagFalse                       // 1: False
-	BoolFlagTrue                        // 2: True
+	BoolFlagTrue                        // 1: True
+	BoolFlagFalse                       // 2: False
+	//                         // 2: True
 )
 
 func (f BoolFlag) String() string {

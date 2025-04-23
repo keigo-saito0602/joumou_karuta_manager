@@ -174,3 +174,24 @@ test: ## [make test] Run unit tests
 .PHONY: test-migrate
 test-migrate: ## [make test-migrate] Run migration tests
 	go test ./cmd/migrate -v
+
+.PHONY: generate-mock
+generate-mock: ## [make generate-mock] 任意の usecase ファイルからモックを生成する 例: make generate-mock USECASE=usecase/user_usecase.go
+	@echo "🔧 Generating mock for $(USECASE)..."
+	@test -n "$(USECASE)" || (echo "❌ USECASEパラメータが必要です（例: make generate-mock USECASE=usecase/user_usecase.go）" && exit 1)
+	@USECASE_FILE=$(USECASE) && \
+	BASENAME=$$(basename $$USECASE_FILE .go) && \
+	MOCK_PATH=interface/handler/mocks/$${BASENAME}_mock.go && \
+	mockgen -source=$$USECASE_FILE -destination=$$MOCK_PATH -package=mocks && \
+	echo "✅ Mock generated: $$MOCK_PATH"
+
+.PHONY: cover
+cover:
+	go test -coverprofile=coverage.out \
+		./interface/handler/... \
+		./usecase/... \
+		./infrastructure/repository/... \
+		./validation/... \
+		./auth/... \
+		./util/...
+	go tool cover -html=coverage.out
