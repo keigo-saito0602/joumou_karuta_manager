@@ -8,13 +8,20 @@ import (
 	_ "github.com/keigo-saito0602/joumou_karuta_manager/docs"
 )
 
-func RegisterRoutes(e *echo.Echo, userHandler *handler.UserHandler) {
+func RegisterRoutes(e *echo.Echo, h *handler.Handlers) {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// User
-	e.GET("/users", userHandler.ListUsers)
-	e.GET("/users/:id", userHandler.GetUser)
-	e.POST("/users", userHandler.CreateUser)
-	e.PUT("/users/:id", userHandler.UpdateUser)
-	e.DELETE("/users/:id", userHandler.DeleteUser)
+	e.GET("/users", h.User.ListUsers)
+	e.GET("/users/:id", h.User.GetUser)
+	e.POST("/users", h.User.CreateUser)
+	e.PUT("/users/:id", h.User.UpdateUser)
+	e.DELETE("/users/:id", h.User.DeleteUser)
+
+	// Memo
+	e.GET("/memos", h.Memo.ListMemos)
+	e.GET("/memos/:id", h.Memo.GetMemo)
+	e.POST("/memos", h.Memo.CreateMemo)
+	e.PUT("/memos/:id", h.Memo.UpdateMemo)
+	e.DELETE("/memos/:id", h.Memo.DeleteMemo)
 }

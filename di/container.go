@@ -2,6 +2,8 @@ package di
 
 import (
 	"github.com/keigo-saito0602/joumou_karuta_manager/infrastructure/db"
+	"github.com/keigo-saito0602/joumou_karuta_manager/interface/handler"
+	"github.com/keigo-saito0602/joumou_karuta_manager/validation"
 	"gorm.io/gorm"
 )
 
@@ -9,17 +11,18 @@ type Container struct {
 	DB       *gorm.DB
 	Repos    *Repositories
 	Usecases *Usecases
-	Handlers *Handlers
+	Handlers *handler.Handlers
 }
 
 func NewContainer() *Container {
-	conn := db.NewMySQLDB()
-	repos := NewRepositories(conn)
-	usecases := NewUsecases(conn, repos)
-	handlers := NewHandlers(usecases)
+	db := db.NewMySQLDB()
+	repos := NewRepositories(db)
+	usecases := NewUsecases(db, repos)
+	validators := validation.NewValidators(repos.User)
+	handlers := NewHandlers(usecases, validators)
 
 	return &Container{
-		DB:       conn,
+		DB:       db,
 		Repos:    repos,
 		Usecases: usecases,
 		Handlers: handlers,

@@ -11,151 +11,151 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UserHandler struct {
-	userUsecase   usecase.UserUsecase
-	userValidator *validation.UserValidator
+type MemoHandler struct {
+	memoUsecase   usecase.MemoUsecase
+	memoValidator *validation.MemoValidator
 }
 
-func NewUserHandler(usecase usecase.UserUsecase, validation *validation.UserValidator) *UserHandler {
-	return &UserHandler{
-		userUsecase:   usecase,
-		userValidator: validation,
+func NewMemoHandler(u usecase.MemoUsecase, v *validation.MemoValidator) *MemoHandler {
+	return &MemoHandler{
+		memoUsecase:   u,
+		memoValidator: v,
 	}
 }
 
-// ListUsers godoc
-// @Summary Get all users
+// ListMemos godoc
+// @Summary Get all memos
 // @Description ユーザーの一覧を取得する
-// @Tags users
+// @Tags memos
 // @Accept json
 // @Produce json
-// @Success 200 {array} model.User
+// @Success 200 {array} model.Memo
 // @Failure 500 {object} map[string]string
-// @Router /users [get]
-func (h *UserHandler) ListUsers(c echo.Context) error {
-	users, err := h.userUsecase.ListUsers(c.Request().Context())
+// @Router /memos [get]
+func (h *MemoHandler) ListMemos(c echo.Context) error {
+	memos, err := h.memoUsecase.ListMemos(c.Request().Context())
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
-	return c.JSON(http.StatusOK, users)
+	return c.JSON(http.StatusOK, memos)
 }
 
-// GetUser godoc
-// @Summary Get user by ID
+// GetMemo godoc
+// @Summary Get memo by ID
 // @Description IDでユーザーを取得する
-// @Tags users
+// @Tags memos
 // @Accept json
 // @Produce json
-// @Param id path int true "User ID"
-// @Success 200 {object} model.User
+// @Param id path int true "Memo ID"
+// @Success 200 {object} model.Memo
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /users/{id} [get]
-func (h *UserHandler) GetUser(c echo.Context) error {
+// @Router /memos/{id} [get]
+func (h *MemoHandler) GetMemo(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := util.ParseUint64Param(idParam)
 	if err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	user, err := h.userUsecase.GetUser(c.Request().Context(), id)
+	memo, err := h.memoUsecase.GetMemo(c.Request().Context(), id)
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, memo)
 }
 
-// CreateUser godoc
-// @Summary Create a new user
+// CreateMemo godoc
+// @Summary Create a new memo
 // @Description 新しいユーザーを作成する
-// @Tags users
+// @Tags memos
 // @Accept json
 // @Produce json
-// @Param user body model.User true "New user"
-// @Success 201 {object} model.User
+// @Param memo body model.Memo true "New memo"
+// @Success 201 {object} model.Memo
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /users [post]
-func (h *UserHandler) CreateUser(c echo.Context) error {
-	var user model.User
-	if err := c.Bind(&user); err != nil {
+// @Router /memos [post]
+func (h *MemoHandler) CreateMemo(c echo.Context) error {
+	var memo model.Memo
+	if err := c.Bind(&memo); err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, "invalid request body")
 	}
 
-	if err := h.userValidator.ValidateCreate(c.Request().Context(), &user); err != nil {
+	if err := h.memoValidator.ValidateCreate(c.Request().Context(), &memo); err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.userUsecase.CreateUser(c.Request().Context(), &user); err != nil {
+	if err := h.memoUsecase.CreateMemo(c.Request().Context(), &memo); err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	return c.JSON(http.StatusCreated, memo)
 }
 
-// UpdateUser godoc
-// @Summary Update user by ID
+// UpdateMemo godoc
+// @Summary Update memo by ID
 // @Description 指定されたIDのユーザー情報を更新します
-// @Tags users
+// @Tags memos
 // @Accept json
 // @Produce json
-// @Param id path int true "User ID"
-// @Param user body model.User true "Updated user"
-// @Success 200 {object} model.User
+// @Param id path int true "Memo ID"
+// @Param memo body model.Memo true "Updated memo"
+// @Success 200 {object} model.Memo
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /users/{id} [put]
-func (h *UserHandler) UpdateUser(c echo.Context) error {
+// @Router /memos/{id} [put]
+func (h *MemoHandler) UpdateMemo(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := util.ParseUint64Param(idParam)
 	if err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	var user model.User
-	if err := c.Bind(&user); err != nil {
+	var memo model.Memo
+	if err := c.Bind(&memo); err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, "invalid request body")
 	}
-	user.ID = id
+	memo.ID = id
 
-	if err := h.userValidator.ValidateUpdate(c.Request().Context(), &user); err != nil {
+	if err := h.memoValidator.ValidateUpdate(c.Request().Context(), &memo); err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	err = h.userUsecase.UpdateUser(c.Request().Context(), &user)
+	err = h.memoUsecase.UpdateMemo(c.Request().Context(), &memo)
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, memo)
 }
 
-// DeleteUser godoc
-// @Summary Delete user by ID
+// DeleteMemo godoc
+// @Summary Delete memo by ID
 // @Description 指定されたIDのユーザーを削除します
-// @Tags users
+// @Tags memos
 // @Accept json
 // @Produce json
-// @Param id path int true "User ID"
+// @Param id path int true "Memo ID"
 // @Success 204
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /users/{id} [delete]
-func (h *UserHandler) DeleteUser(c echo.Context) error {
+// @Router /memos/{id} [delete]
+func (h *MemoHandler) DeleteMemo(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := util.ParseUint64Param(idParam)
 	if err != nil {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	err = h.userUsecase.DeleteUser(c.Request().Context(), id)
+	err = h.memoUsecase.DeleteMemo(c.Request().Context(), id)
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())

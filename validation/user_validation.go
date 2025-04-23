@@ -27,3 +27,19 @@ func (v *UserValidator) ValidateUpdate(ctx context.Context, u *model.User) error
 		validation.Field(&u.Email, validation.Required, validation.Length(5, 100), validation.By(ValidateEmailFormat)),
 	)
 }
+
+// UserIDがDBに存在するか
+func (v *MemoValidator) userExistsValidator() validation.RuleFunc {
+	return func(value interface{}) error {
+		userID, ok := value.(uint64)
+		if !ok || userID == 0 {
+			return nil
+		}
+
+		_, err := v.userRepo.GetUser(context.Background(), userID)
+		if err != nil {
+			return validation.NewError("validation_user", "指定されたユーザーが存在しません")
+		}
+		return nil
+	}
+}

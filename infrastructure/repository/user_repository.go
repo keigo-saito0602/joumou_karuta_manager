@@ -16,7 +16,7 @@ type UserRepository interface {
 	DeleteUser(ctx context.Context, id uint64) error
 }
 
-type gormUserRepository struct{
+type gormUserRepository struct {
 	db *gorm.DB
 }
 

@@ -7,12 +7,12 @@ import (
 
 type Usecases struct {
 	User usecase.UserUsecase
-	// Memo usecase.MemoUsecase
+	Memo usecase.MemoUsecase
 }
 
-func NewUsecases(db *gorm.DB, repo *Repositories) *Usecases {
+func NewUsecases(db *gorm.DB, repository *Repositories) *Usecases {
 	return &Usecases{
-		User: usecase.NewUserUsecase(db, repo.User),
-		// Memo: usecase.NewMemoUsecase(db, repo.Memo),
+		User: usecase.NewUserUsecase(db, repository.User),
+		Memo: usecase.NewMemoUsecase(db, repository.Memo),
 	}
 }
