@@ -78,3 +78,14 @@ func ValidateFixedLength(length int) validation.RuleFunc {
 		return nil
 	}
 }
+
+func validatePositiveUint64(value interface{}) error {
+	v, ok := value.(uint64)
+	if !ok {
+		return validation.NewError("validation_user_id", "user_id must be a positive integer")
+	}
+	if v == 0 {
+		return validation.NewError("validation_user_id", "user_id must be greater than 0")
+	}
+	return nil
+}

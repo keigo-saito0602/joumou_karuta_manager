@@ -25,4 +25,3 @@ func migrateUpCommand() *cobra.Command {
 		},
 	}
 }
-

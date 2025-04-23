@@ -32,4 +32,3 @@ func newServeCmd() *cobra.Command {
 		},
 	}
 }
-

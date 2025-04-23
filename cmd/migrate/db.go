@@ -17,4 +17,3 @@ func newMigrator() (*migrate.Migrate, error) {
 	)
 	return migrate.New("file://assets/migrations", dbURL)
 }
-

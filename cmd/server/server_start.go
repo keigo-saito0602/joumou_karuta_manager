@@ -33,7 +33,7 @@ func runServer(ctx context.Context) error {
 	container := di.NewContainer()
 	log.Println("✅ Connected to MySQL:", container.DB)
 
-	router.RegisterRoutes(e, container.Handlers.User)
+	router.RegisterRoutes(e, container.Handlers)
 	logger.Init()
 
 	go func() {

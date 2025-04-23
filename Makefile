@@ -165,7 +165,7 @@ swag-open: ## [make swag-open] Open Swagger UI
 
 .PHONY: lint
 lint: ## [make lint] Run linters
-	golangci-lint run
+	golangci-lint run --concurrency=2
 
 .PHONY: test
 test: ## [make test] Run unit tests
