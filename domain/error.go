@@ -61,3 +61,35 @@ func ErrorToHTTPStatus(err error) int {
 		return http.StatusInternalServerError
 	}
 }
+
+func WithInternalError(msg string) error {
+	return fmt.Errorf("%w: %s", ErrInternalServer, msg)
+}
+
+func WithInvalidArgument(msg string) error {
+	return fmt.Errorf("%w: %s", ErrInvalidArgument, msg)
+}
+
+func WithNotFound(msg string) error {
+	return fmt.Errorf("%w: %s", ErrNotFound, msg)
+}
+
+func WithAlreadyExists(msg string) error {
+	return fmt.Errorf("%w: %s", ErrAlreadyExists, msg)
+}
+
+func WithPermissionDenied(msg string) error {
+	return fmt.Errorf("%w: %s", ErrPermissionDenied, msg)
+}
+
+func WithUnimplemented(msg string) error {
+	return fmt.Errorf("%w: %s", ErrUnimplemented, msg)
+}
+
+func WithDataResourceAccess(msg string) error {
+	return fmt.Errorf("%w: %s", ErrDataResourceAccess, msg)
+}
+
+func WithValidationError(msg string) error {
+	return fmt.Errorf("%w: %s", ErrInvalidArgument, msg)
+}

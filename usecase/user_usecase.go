@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/keigo-saito0602/joumou_karuta_manager/config/logger"
+	"github.com/keigo-saito0602/joumou_karuta_manager/domain"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
 	dbctx "github.com/keigo-saito0602/joumou_karuta_manager/infrastructure/db"
 	"github.com/keigo-saito0602/joumou_karuta_manager/infrastructure/repository"
+	"github.com/keigo-saito0602/joumou_karuta_manager/util"
 	"gorm.io/gorm"
 )
 
@@ -16,6 +18,7 @@ type UserUsecase interface {
 	CreateUser(ctx context.Context, user *model.User) error
 	UpdateUser(ctx context.Context, user *model.User) error
 	DeleteUser(ctx context.Context, id uint64) error
+	GetByEmail(ctx context.Context, email string) (*model.User, error)
 }
 
 type userUsecase struct {
@@ -56,11 +59,19 @@ func (u *userUsecase) CreateUser(ctx context.Context, user *model.User) error {
 	log := logger.FromContext(ctx)
 	log.Infof("CreateUser called: %+v", user)
 
-	err := u.userRepository.CreateUser(ctx, user)
+	hashedPassword, err := util.HashPassword(user.Password)
 	if err != nil {
-		log.Errorf("failed to create user: %v", err)
+		log.Errorf("failed to hash password: %v", err)
+		return domain.WithInternalError("パスワードのハッシュ化に失敗しました")
 	}
-	return err
+	user.Password = hashedPassword
+
+	if err := u.userRepository.CreateUser(ctx, user); err != nil {
+		log.Errorf("failed to create user: %v", err)
+		return err
+	}
+
+	return nil
 }
 
 func (u *userUsecase) UpdateUser(ctx context.Context, user *model.User) error {
@@ -85,4 +96,16 @@ func (u *userUsecase) DeleteUser(ctx context.Context, id uint64) error {
 		log.Errorf("failed to delete user: %v", err)
 	}
 	return err
+}
+
+func (u *userUsecase) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+	ctx = dbctx.ToContext(ctx, u.db)
+	log := logger.FromContext(ctx)
+	log.Infof("GetByEmail called with ID=%s", email)
+
+	user, err := u.userRepository.GetByEmail(ctx, email)
+	if err != nil {
+		log.Errorf("failed to get user: %v", err)
+	}
+	return user, err
 }
