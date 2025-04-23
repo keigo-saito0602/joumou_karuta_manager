@@ -83,7 +83,7 @@ func (u *cardUsecase) ListCardsBySyllabary(ctx context.Context, syllabary model.
 	initials := model.GetInitialsBySyllabary(syllabary)
 	if len(initials) == 0 {
 		log.Warnf("invalid syllabary: %s", syllabary)
-		return nil, domain.WithInvalidArgument("invalid syllabary")
+		return nil, domain.WithInvalidArgument("invalid syllabary: Consonant Not Request")
 	}
 
 	cards, err := u.cardRepository.ListCardsByInitial(ctx, initials)
