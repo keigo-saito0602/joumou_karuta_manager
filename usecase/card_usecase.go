@@ -79,6 +79,7 @@ func (u *cardUsecase) ListShuffledCards(ctx context.Context) ([]model.Card, erro
 func (u *cardUsecase) ListCardsBySyllabary(ctx context.Context, syllabary model.Syllabary) ([]model.Card, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
+	log.Info("ListCardsBySyllabary called")
 
 	initials := model.GetInitialsBySyllabary(syllabary)
 	if len(initials) == 0 {
