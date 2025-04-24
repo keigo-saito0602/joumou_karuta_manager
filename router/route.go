@@ -12,6 +12,7 @@ import (
 )
 
 func RegisterRoutes(e *echo.Echo, h *handler.Handlers) {
+	ApplyCORS(e)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// User
