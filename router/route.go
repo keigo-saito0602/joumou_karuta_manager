@@ -12,6 +12,7 @@ import (
 )
 
 func RegisterRoutes(e *echo.Echo, h *handler.Handlers) {
+	ApplyCORS(e)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// User
@@ -28,7 +29,13 @@ func RegisterRoutes(e *echo.Echo, h *handler.Handlers) {
 	e.GET("/memos", h.Memo.ListMemos)
 	e.GET("/memos/:id", h.Memo.GetMemo)
 
-	RegisterAuthRoutes(e,h)
+	// Card
+	e.GET("/cards", h.Card.ListCards)
+	e.GET("/cards/:id", h.Card.GetCard)
+	e.GET("/cards/shuffle", h.Card.ShuffleCards)
+	e.GET("/cards/initial", h.Card.ListCardsByInitial)
+
+	RegisterAuthRoutes(e, h)
 }
 
 func RegisterAuthRoutes(e *echo.Echo, h *handler.Handlers) {
@@ -49,5 +56,4 @@ func RegisterAuthRoutes(e *echo.Echo, h *handler.Handlers) {
 	authGroup.POST("/memos", h.Memo.CreateMemo)
 	authGroup.PUT("/memos/:id", h.Memo.UpdateMemo)
 	authGroup.DELETE("/memos/:id", h.Memo.DeleteMemo)
-
 }

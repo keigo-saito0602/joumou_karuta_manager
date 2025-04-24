@@ -8,11 +8,13 @@ import (
 type Repositories struct {
 	User repository.UserRepository
 	Memo repository.MemoRepository
+	Card repository.CardRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
 	return &Repositories{
 		User: repository.NewUserRepository(db),
 		Memo: repository.NewMemoRepository(db),
+		Card: repository.NewCardRepository(db),
 	}
 }
