@@ -35,6 +35,12 @@ func RegisterRoutes(e *echo.Echo, h *handler.Handlers) {
 	e.GET("/cards/shuffle", h.Card.ShuffleCards)
 	e.GET("/cards/initial", h.Card.ListCardsByInitial)
 
+	// EventScore
+	e.POST("/event_scores", h.EventScore.CreateEventScore)
+	e.GET("/event_scores/:id", h.EventScore.GetEventScoreWithRank)
+	e.GET("/event_scores", h.EventScore.ListEventScoresWithRank)
+	e.DELETE("/event_scores", h.EventScore.DeleteAllEventScores)
+
 	RegisterAuthRoutes(e, h)
 }
 
