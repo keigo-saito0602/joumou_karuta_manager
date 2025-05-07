@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"log"
 
 	"github.com/keigo-saito0602/joumou_karuta_manager/config/logger"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
@@ -25,51 +24,50 @@ func NewEventScoreRepository(db *gorm.DB) EventScoreRepository {
 }
 
 func (r *eventScoreRepository) CreateEventScore(ctx context.Context, eventScore *model.EventScoreForCreate) error {
+	log := logger.FromContext(ctx)
 	err := r.db.
 		Table("event_scores").
 		Create(eventScore).
 		Error
 	if err != nil {
-		log.Printf("[EventScoreRepository][CreateEventScore] Failed to create eventScore: %v", err)
+		log.Errorf("[EventScoreRepository][CreateEventScore] Failed to create eventScore: %v", err)
 	}
 	return err
 }
 
 func (r *eventScoreRepository) GetEventScoreWithRank(ctx context.Context, id uint64) (*model.EventScore, error) {
 	var e model.EventScore
-	// 対象レコードをIDで取得
+
 	if err := r.db.
+		WithContext(ctx).
 		Table("event_scores").
 		First(&e, id).
 		Error; err != nil {
 		return nil, err
 	}
 
-	// 取得した対象レコードの得点より上位の件数をカウントする。 rank = count + 1
-	var cnt int64
-	if err := r.db.
-		Table("event_scores").
-		Where(`
-			score > ? OR
-			(score = ? AND cards_taken > ?) OR
-			(score = ? AND cards_taken = ? AND fault_count < ?) OR
-			(score = ? AND cards_taken = ? AND fault_count = ? AND created_at < ?)
-		`,
-			e.Score, e.Score, e.CardsTaken,
-			e.Score, e.Score, e.FaultCount,
-			e.Score, e.Score, e.FaultCount, e.CreatedAt,
-		).
-		Count(&cnt).
-		Error; err != nil {
+	// ランク計算
+	rank, err := r.calculateRank(ctx, &e)
+	if err != nil {
 		return nil, err
 	}
-	e.Rank = int(cnt) + 1
+	e.Rank = rank
+
+	// 総件数取得
+	total, err := r.countAllEventScores(ctx)
+	if err != nil {
+		return nil, err
+	}
+	e.TotalUsers = total
+
 	return &e, nil
 }
 
 func (r *eventScoreRepository) ListEventScores(ctx context.Context) ([]*model.EventScore, error) {
 	var tmp []model.EventScore
-	if err := r.db.Raw(`
+	if err := r.db.
+		WithContext(ctx).
+		Raw(`
 			SELECT
 					id, name, feeling, score, cards_taken, fault_count, created_at
 			FROM event_scores
@@ -98,4 +96,38 @@ func (r *eventScoreRepository) DeleteAllEventScores(ctx context.Context) error {
 		log.Errorf("failed to delete eventScores: %v", err)
 	}
 	return err
+}
+
+func (r *eventScoreRepository) countAllEventScores(ctx context.Context) (int, error) {
+	var total int64
+	if err := r.db.
+		WithContext(ctx).
+		Table("event_scores").
+		Count(&total).
+		Error; err != nil {
+		return 0, err
+	}
+	return int(total), nil
+}
+
+func (r *eventScoreRepository) calculateRank(ctx context.Context, e *model.EventScore) (int, error) {
+	var cnt int64
+	if err := r.db.
+		WithContext(ctx).
+		Table("event_scores").
+		Where(`
+			score > ? OR
+			(score = ? AND cards_taken > ?) OR
+			(score = ? AND cards_taken = ? AND fault_count < ?) OR
+			(score = ? AND cards_taken = ? AND fault_count = ? AND created_at < ?)
+		`,
+			e.Score, e.Score, e.CardsTaken,
+			e.Score, e.Score, e.FaultCount,
+			e.Score, e.Score, e.FaultCount, e.CreatedAt,
+		).
+		Count(&cnt).
+		Error; err != nil {
+		return 0, err
+	}
+	return int(cnt) + 1, nil
 }

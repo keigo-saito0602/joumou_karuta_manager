@@ -66,6 +66,11 @@ func (u *eventScoreUsecase) ListEventScoresWithRank(ctx context.Context) ([]*mod
 
 	assignRanks(scores)
 
+	totalUsers := len(scores)
+	for _, e := range scores {
+		e.TotalUsers = totalUsers
+	}
+
 	return scores, nil
 }
 

@@ -5,6 +5,7 @@ import "time"
 type EventScore struct {
 	ID         uint64     `json:"id"`
 	Rank       int        `json:"rank"`
+	TotalUsers int        `json:"total_users"`
 	Name       string     `json:"name"`
 	Feeling    string     `json:"feeling"`
 	Score      int        `json:"score"`
