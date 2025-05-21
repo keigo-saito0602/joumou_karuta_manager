@@ -20,7 +20,7 @@ type UserUsecase interface {
 	UpdateUser(ctx context.Context, user *model.User) (*model.UserResponse, error)
 	DeleteUser(ctx context.Context, id uint64) error
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
-	Login(ctx context.Context, email, password string) (string, *model.UserResponse, error)
+	Login(ctx context.Context, email, password string) (*model.LoginResponse, error)
 }
 
 type userUsecase struct {
@@ -118,7 +118,7 @@ func (u *userUsecase) GetByEmail(ctx context.Context, email string) (*model.User
 	return user, err
 }
 
-func (u *userUsecase) Login(ctx context.Context, email, password string) (string, *model.UserResponse, error) {
+func (u *userUsecase) Login(ctx context.Context, email, password string) (*model.LoginResponse, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
 	log.Infof("Login called with email=%s", email)
@@ -126,21 +126,24 @@ func (u *userUsecase) Login(ctx context.Context, email, password string) (string
 	user, err := u.userRepository.GetByEmail(ctx, email)
 	if err != nil {
 		log.Warnf("email not found: %v", err)
-		return "", nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
+		return nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
 	}
 
 	if !util.CheckPasswordHash(password, user.Password) {
 		log.Warnf("password mismatch for email=%s", email)
-		return "", nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
+		return nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
 	}
 
 	token, err := auth.GenerateJWT(user.ID, user.Role)
 	if err != nil {
 		log.Errorf("token generation failed: %v", err)
-		return "", nil, domain.WithInternalError("トークン生成に失敗しました")
+		return nil, domain.WithInternalError("トークン生成に失敗しました")
 	}
 
-	return token, ToUserResponse(user), nil
+	return &model.LoginResponse{
+		Token: token,
+		User:  ToUserResponse(user),
+	}, nil
 }
 
 func ToUserResponse(u *model.User) *model.UserResponse {

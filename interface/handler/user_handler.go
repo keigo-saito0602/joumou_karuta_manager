@@ -172,7 +172,7 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param request body model.LoginRequest true "ログイン情報"
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {object} model.LoginResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Router /login [post]
@@ -182,16 +182,13 @@ func (h *UserHandler) Login(c echo.Context) error {
 		return util.ErrorJSON(c, http.StatusBadRequest, "不正なリクエストです")
 	}
 
-	token, userResp, err := h.userUsecase.Login(c.Request().Context(), req.Email, req.Password)
+	resp, err := h.userUsecase.Login(c.Request().Context(), req.Email, req.Password)
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
-		"user":  userResp,
-	})
+	return c.JSON(http.StatusOK, resp)
 }
 
 // AdminOnlySetting godoc

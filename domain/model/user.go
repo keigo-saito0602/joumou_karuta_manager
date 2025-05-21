@@ -12,6 +12,11 @@ type User struct {
 	UpdatedAt *time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
+type LoginResponse struct {
+	Token string        `json:"token"`
+	User  *UserResponse `json:"user"`
+}
+
 type UserResponse struct {
 	ID    uint64 `json:"id"`
 	Name  string `json:"name"`
