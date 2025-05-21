@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/keigo-saito0602/joumou_karuta_manager/auth"
 	"github.com/keigo-saito0602/joumou_karuta_manager/config/logger"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
@@ -13,12 +14,13 @@ import (
 )
 
 type UserUsecase interface {
-	GetUser(ctx context.Context, id uint64) (*model.User, error)
-	ListUsers(ctx context.Context) ([]model.User, error)
-	CreateUser(ctx context.Context, user *model.User) error
-	UpdateUser(ctx context.Context, user *model.User) error
+	GetUser(ctx context.Context, id uint64) (*model.UserResponse, error)
+	ListUsers(ctx context.Context) ([]*model.UserResponse, error)
+	CreateUser(ctx context.Context, user *model.User) (*model.UserResponse, error)
+	UpdateUser(ctx context.Context, user *model.User) (*model.UserResponse, error)
 	DeleteUser(ctx context.Context, id uint64) error
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
+	Login(ctx context.Context, email, password string) (string, *model.UserResponse, error)
 }
 
 type userUsecase struct {
@@ -30,7 +32,7 @@ func NewUserUsecase(db *gorm.DB, repo repository.UserRepository) UserUsecase {
 	return &userUsecase{db: db, userRepository: repo}
 }
 
-func (u *userUsecase) GetUser(ctx context.Context, id uint64) (*model.User, error) {
+func (u *userUsecase) GetUser(ctx context.Context, id uint64) (*model.UserResponse, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
 	log.Infof("GetUser called with ID=%d", id)
@@ -38,11 +40,13 @@ func (u *userUsecase) GetUser(ctx context.Context, id uint64) (*model.User, erro
 	user, err := u.userRepository.GetUser(ctx, id)
 	if err != nil {
 		log.Errorf("failed to get user: %v", err)
+		return nil, err
 	}
-	return user, err
+
+	return ToUserResponse(user), nil
 }
 
-func (u *userUsecase) ListUsers(ctx context.Context) ([]model.User, error) {
+func (u *userUsecase) ListUsers(ctx context.Context) ([]*model.UserResponse, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
 	log.Info("ListUsers called")
@@ -50,11 +54,13 @@ func (u *userUsecase) ListUsers(ctx context.Context) ([]model.User, error) {
 	users, err := u.userRepository.ListUsers(ctx)
 	if err != nil {
 		log.Errorf("failed to list users: %v", err)
+		return nil, err
 	}
-	return users, err
+
+	return ToUserResponseList(users), nil
 }
 
-func (u *userUsecase) CreateUser(ctx context.Context, user *model.User) error {
+func (u *userUsecase) CreateUser(ctx context.Context, user *model.User) (*model.UserResponse, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
 	log.Infof("CreateUser called: %+v", user)
@@ -62,19 +68,19 @@ func (u *userUsecase) CreateUser(ctx context.Context, user *model.User) error {
 	hashedPassword, err := util.HashPassword(user.Password)
 	if err != nil {
 		log.Errorf("failed to hash password: %v", err)
-		return domain.WithInternalError("パスワードのハッシュ化に失敗しました")
+		return nil, domain.WithInternalError("パスワードのハッシュ化に失敗しました")
 	}
 	user.Password = hashedPassword
 
 	if err := u.userRepository.CreateUser(ctx, user); err != nil {
 		log.Errorf("failed to create user: %v", err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return ToUserResponse(user), nil
 }
 
-func (u *userUsecase) UpdateUser(ctx context.Context, user *model.User) error {
+func (u *userUsecase) UpdateUser(ctx context.Context, user *model.User) (*model.UserResponse, error) {
 	ctx = dbctx.ToContext(ctx, u.db)
 	log := logger.FromContext(ctx)
 	log.Infof("UpdateUser called: ID=%d", user.ID)
@@ -82,8 +88,10 @@ func (u *userUsecase) UpdateUser(ctx context.Context, user *model.User) error {
 	err := u.userRepository.UpdateUser(ctx, user)
 	if err != nil {
 		log.Errorf("failed to update user: %v", err)
+		return nil, err
 	}
-	return err
+
+	return ToUserResponse(user), nil
 }
 
 func (u *userUsecase) DeleteUser(ctx context.Context, id uint64) error {
@@ -108,4 +116,46 @@ func (u *userUsecase) GetByEmail(ctx context.Context, email string) (*model.User
 		log.Errorf("failed to get user: %v", err)
 	}
 	return user, err
+}
+
+func (u *userUsecase) Login(ctx context.Context, email, password string) (string, *model.UserResponse, error) {
+	ctx = dbctx.ToContext(ctx, u.db)
+	log := logger.FromContext(ctx)
+	log.Infof("Login called with email=%s", email)
+
+	user, err := u.userRepository.GetByEmail(ctx, email)
+	if err != nil {
+		log.Warnf("email not found: %v", err)
+		return "", nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
+	}
+
+	if !util.CheckPasswordHash(password, user.Password) {
+		log.Warnf("password mismatch for email=%s", email)
+		return "", nil, domain.WithUnauthenticated("メールアドレスまたはパスワードが間違っています")
+	}
+
+	token, err := auth.GenerateJWT(user.ID, user.Role)
+	if err != nil {
+		log.Errorf("token generation failed: %v", err)
+		return "", nil, domain.WithInternalError("トークン生成に失敗しました")
+	}
+
+	return token, ToUserResponse(user), nil
+}
+
+func ToUserResponse(u *model.User) *model.UserResponse {
+	return &model.UserResponse{
+		ID:    u.ID,
+		Name:  u.Name,
+		Email: u.Email,
+		Role:  u.Role,
+	}
+}
+
+func ToUserResponseList(users []model.User) []*model.UserResponse {
+	res := make([]*model.UserResponse, 0, len(users))
+	for _, u := range users {
+		res = append(res, ToUserResponse(&u))
+	}
+	return res
 }

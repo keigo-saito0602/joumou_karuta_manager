@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 
-	"github.com/keigo-saito0602/joumou_karuta_manager/auth"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
 	"github.com/keigo-saito0602/joumou_karuta_manager/usecase"
@@ -30,7 +29,7 @@ func NewUserHandler(usecase usecase.UserUsecase, validation *validation.UserVali
 // @Tags users
 // @Accept json
 // @Produce json
-// @Success 200 {array} model.User
+// @Success 200 {array} model.UserResponse
 // @Failure 500 {object} map[string]string
 // @Router /users [get]
 func (h *UserHandler) ListUsers(c echo.Context) error {
@@ -49,7 +48,7 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} model.User
+// @Success 200 {object} model.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -77,7 +76,7 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user body model.User true "New user"
-// @Success 201 {object} model.User
+// @Success 201 {object} model.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /users [post]
@@ -91,12 +90,13 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.userUsecase.CreateUser(c.Request().Context(), &user); err != nil {
+	created, err := h.userUsecase.CreateUser(c.Request().Context(), &user)
+	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	return c.JSON(http.StatusCreated, created)
 }
 
 // UpdateUser godoc
@@ -107,7 +107,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Produce json
 // @Param id path int true "User ID"
 // @Param user body model.User true "Updated user"
-// @Success 200 {object} model.User
+// @Success 200 {object} model.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -129,13 +129,13 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		return util.ErrorJSON(c, http.StatusBadRequest, err.Error())
 	}
 
-	err = h.userUsecase.UpdateUser(c.Request().Context(), &user)
+	updated, err := h.userUsecase.UpdateUser(c.Request().Context(), &user)
 	if err != nil {
 		status := domain.ErrorToHTTPStatus(err)
 		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, updated)
 }
 
 // DeleteUser godoc
@@ -172,7 +172,7 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param request body model.LoginRequest true "ログイン情報"
-// @Success 200 {object} map[string]string
+// @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Router /login [post]
@@ -182,17 +182,16 @@ func (h *UserHandler) Login(c echo.Context) error {
 		return util.ErrorJSON(c, http.StatusBadRequest, "不正なリクエストです")
 	}
 
-	user, err := h.userUsecase.GetByEmail(c.Request().Context(), req.Email)
-	if err != nil || !util.CheckPasswordHash(req.Password, user.Password) {
-		return util.ErrorJSON(c, http.StatusUnauthorized, "メールアドレスまたはパスワードが間違っています")
-	}
-
-	token, err := auth.GenerateJWT(user.ID, user.Role)
+	token, userResp, err := h.userUsecase.Login(c.Request().Context(), req.Email, req.Password)
 	if err != nil {
-		return util.ErrorJSON(c, http.StatusInternalServerError, "トークン生成に失敗しました")
+		status := domain.ErrorToHTTPStatus(err)
+		return util.ErrorJSON(c, status, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"token": token})
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+		"user":  userResp,
+	})
 }
 
 // AdminOnlySetting godoc
