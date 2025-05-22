@@ -16,6 +16,9 @@ DB_USER ?= user
 DB_PASSWORD ?= password
 DB_NAME ?= joumou_karuta_manager
 
+PROJECT_NAME ?= joumou_karuta_manager
+DOCKER_NETWORK_NAME ?= joumou_karuta_manager_default
+
 # =======================
 # Golang CLI Application
 # =======================
