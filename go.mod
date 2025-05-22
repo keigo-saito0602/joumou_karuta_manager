@@ -1,6 +1,8 @@
 module github.com/keigo-saito0602/joumou_karuta_manager
 
-go 1.22.2
+go 1.23
+
+toolchain go1.23.9
 
 require (
 	github.com/go-delve/delve v1.24.2
@@ -19,6 +21,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.4
+	go.uber.org/mock v0.5.2
 	golang.org/x/crypto v0.32.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
