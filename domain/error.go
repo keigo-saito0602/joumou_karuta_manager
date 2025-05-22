@@ -19,6 +19,7 @@ var (
 	ErrInternalServer      = errors.New("internal server error")
 	ErrPermissionDenied    = errors.New("permission denied")
 	ErrUnimplemented       = errors.New("unimplemented")
+	ErrUnauthenticated     = errors.New("unauthenticated")
 	ErrDuplicateEntry      = fmt.Errorf("%w: duplicate entry", ErrInvalidArgument)
 	ErrUserNotFound        = fmt.Errorf("%w: user not found", ErrNotFound)
 	ErrUserAlreadyExists   = fmt.Errorf("%w: user already exists", ErrAlreadyExists)
@@ -53,6 +54,8 @@ func ErrorToHTTPStatus(err error) int {
 		return http.StatusConflict
 	case errors.Is(err, ErrPermissionDenied):
 		return http.StatusForbidden
+	case errors.Is(err, ErrUnauthenticated):
+		return http.StatusUnauthorized
 	case errors.Is(err, ErrDataResourceAccess):
 		return http.StatusInternalServerError
 	case errors.Is(err, ErrUnimplemented):
@@ -92,4 +95,8 @@ func WithDataResourceAccess(msg string) error {
 
 func WithValidationError(msg string) error {
 	return fmt.Errorf("%w: %s", ErrInvalidArgument, msg)
+}
+
+func WithUnauthenticated(msg string) error {
+	return fmt.Errorf("%w: %s", ErrUnauthenticated, msg)
 }

@@ -10,8 +10,8 @@ type Validators struct {
 
 func NewValidators(userRepo repository.UserRepository) *Validators {
 	return &Validators{
-		User:       NewUserValidator(),
-		Memo:       NewMemoValidator(userRepo),
+		User:       NewUserValidator(userRepo),
+		Memo:       NewMemoValidator(NewUserValidator(userRepo)),
 		EventScore: NewEventScoreValidator(),
 	}
 }

@@ -5,15 +5,14 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/keigo-saito0602/joumou_karuta_manager/domain/model"
-	"github.com/keigo-saito0602/joumou_karuta_manager/infrastructure/repository"
 )
 
 type MemoValidator struct {
-	userRepo repository.UserRepository
+	userValidator *UserValidator
 }
 
-func NewMemoValidator(userRepo repository.UserRepository) *MemoValidator {
-	return &MemoValidator{userRepo: userRepo}
+func NewMemoValidator(userValidator *UserValidator) *MemoValidator {
+	return &MemoValidator{userValidator: userValidator}
 }
 
 func (v *MemoValidator) ValidateCreate(ctx context.Context, m *model.Memo) error {
@@ -21,7 +20,7 @@ func (v *MemoValidator) ValidateCreate(ctx context.Context, m *model.Memo) error
 		validation.Field(&m.UserID,
 			validation.Required,
 			validation.By(validatePositiveUint64),
-			validation.By(v.userExistsValidator()),
+			validation.By(v.userValidator.UserExistsValidator()),
 		),
 		validation.Field(&m.Title, validation.Required, validation.RuneLength(2, 20)),
 		validation.Field(&m.Active, validation.Required, validation.In(model.BoolFlagFalse, model.BoolFlagTrue)),
@@ -35,7 +34,7 @@ func (v *MemoValidator) ValidateUpdate(ctx context.Context, m *model.Memo) error
 		validation.Field(&m.UserID,
 			validation.Required,
 			validation.By(validatePositiveUint64),
-			validation.By(v.userExistsValidator()),
+			validation.By(v.userValidator.UserExistsValidator()),
 		),
 		validation.Field(&m.Title, validation.Required, validation.RuneLength(2, 20)),
 		validation.Field(&m.Active, validation.Required, validation.In(model.BoolFlagFalse, model.BoolFlagTrue)),
