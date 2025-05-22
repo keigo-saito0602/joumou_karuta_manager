@@ -47,6 +47,7 @@ func (v *UserValidator) UserExistsValidator() validation.RuleFunc {
 	}
 }
 
+// Emailが登録済みかどうか
 func (v *UserValidator) EmailAlreadyExistsValidator() validation.RuleFunc {
 	return func(value interface{}) error {
 		email, ok := value.(string)
